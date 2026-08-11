@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Flashcards</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <h1>Flashcards Practice 🎴</h1>
+    <p class="progress" id="progress">Card 1 of 3</p>
+
+    <div class="card-container" onclick="flipCard()">
+      <div class="card" id="card">
+        <div class="card-face front" id="card-front">
+          Question loading...
+        </div>
+        <div class="card-face back" id="card-back">
+          Answer loading...
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="prevCard()">Prev ⬅️</button>
+      <button onclick="nextCard()">Next ➡️</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
