@@ -1,9 +1,6 @@
 (() => {
   "use strict";
 
-  /* ---------------------------------------------------------
-     STORAGE
-  --------------------------------------------------------- */
   const STORAGE_KEY = "deckbox.decks.v1";
 
   function loadDecks() {
@@ -24,26 +21,20 @@
     return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   }
 
-  /* ---------------------------------------------------------
-     STATE
-  --------------------------------------------------------- */
   const state = {
-    decks: loadDecks(),          // [{id, name, cards:[{id, front, back}]}]
+    decks: loadDecks(),          
     activeDeckId: null,
-    editingCardId: null,          // card currently being edited in the editor form
+    editingCardId: null,          
     study: {
-      order: [],                  // array of card ids for this round
+      order: [],                  
       index: 0,
       flipped: false,
       known: new Set(),
       stillLearning: new Set(),
-      roundSource: "all",         // "all" | "relearn"
+      roundSource: "all",        
     },
   };
 
-  /* ---------------------------------------------------------
-     DOM REFS
-  --------------------------------------------------------- */
   const views = {
     library: document.getElementById("view-library"),
     editor: document.getElementById("view-editor"),
@@ -101,9 +92,6 @@
     return state.decks.find((d) => d.id === state.activeDeckId) || null;
   }
 
-  /* ---------------------------------------------------------
-     LIBRARY VIEW
-  --------------------------------------------------------- */
   function renderLibrary() {
     deckGrid.innerHTML = "";
     libraryEmpty.classList.toggle("hidden", state.decks.length > 0);
@@ -145,9 +133,6 @@
     });
   }
 
-  /* ---------------------------------------------------------
-     EDITOR VIEW
-  --------------------------------------------------------- */
   function openEditor(deckId) {
     state.activeDeckId = deckId;
     state.editingCardId = null;
@@ -294,9 +279,6 @@
     startStudySession(deck.cards.map((c) => c.id), "all");
   });
 
-  /* ---------------------------------------------------------
-     STUDY VIEW
-  --------------------------------------------------------- */
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -423,9 +405,7 @@
     }
   });
 
-  /* ---------------------------------------------------------
-     ROUND COMPLETE VIEW
-  --------------------------------------------------------- */
+
   completeRetryLearning.addEventListener("click", () => {
     const ids = Array.from(state.study.stillLearning);
     if (ids.length === 0) return;
@@ -443,9 +423,6 @@
     showView("library");
   });
 
-  /* ---------------------------------------------------------
-     INIT
-  --------------------------------------------------------- */
   renderLibrary();
   showView("library");
 })();
