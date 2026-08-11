@@ -1,34 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Flashcards</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deckbox — Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="app-container">
-    <h1>Flashcards Practice 🎴</h1>
-    <p class="progress" id="progress">Card 1 of 3</p>
+<!-- ===================== LIBRARY VIEW ===================== -->
+<section id="view-library" class="view">
+  <header class="library-header">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-name">Deckbox</span>
+    </div>
+    <p class="library-tagline">Your decks, ready to study.</p>
+  </header>
 
-    <div class="card-container" onclick="flipCard()">
-      <div class="card" id="card">
-        <div class="card-face front" id="card-front">
-          Question loading...
-        </div>
-        <div class="card-face back" id="card-back">
-          Answer loading...
+  <div id="deck-grid" class="deck-grid"></div>
+
+  <div id="library-empty" class="library-empty hidden">
+    <p>No decks yet.</p>
+    <p class="library-empty-sub">Start a deck below and add your first card.</p>
+  </div>
+</section>
+
+<!-- ===================== DECK EDITOR VIEW ===================== -->
+<section id="view-editor" class="view hidden">
+  <header class="editor-header">
+    <button class="btn-icon" id="editor-back" aria-label="Back to library">←</button>
+    <input id="editor-deck-title" class="editor-title-input" type="text" maxlength="60" placeholder="Untitled deck">
+    <button class="btn-icon btn-danger" id="editor-delete-deck" aria-label="Delete deck">🗑</button>
+  </header>
+
+  <form id="card-form" class="card-form">
+    <div class="card-form-row">
+      <label class="card-form-label" for="input-front">Front</label>
+      <textarea id="input-front" class="card-form-field" placeholder="Question, term, or prompt" required rows="2"></textarea>
+    </div>
+    <div class="card-form-row">
+      <label class="card-form-label" for="input-back">Back</label>
+      <textarea id="input-back" class="card-form-field" placeholder="Answer or definition" required rows="2"></textarea>
+    </div>
+    <div class="card-form-actions">
+      <button type="submit" class="btn btn-primary" id="card-form-submit">Add card</button>
+      <button type="button" class="btn btn-ghost hidden" id="card-form-cancel">Cancel edit</button>
+    </div>
+  </form>
+
+  <ul id="card-list" class="card-list"></ul>
+
+  <p id="editor-empty" class="editor-empty hidden">No cards yet — add one above to build your deck.</p>
+
+  <div class="editor-footer">
+    <span class="mono-label" id="editor-count">0 cards</span>
+    <button class="btn btn-study" id="editor-study-btn" disabled>Study this deck →</button>
+  </div>
+</section>
+
+<!-- ===================== STUDY VIEW ===================== -->
+<section id="view-study" class="view hidden">
+  <header class="study-header">
+    <button class="btn-icon" id="study-back" aria-label="Back to library">←</button>
+    <div class="study-heading">
+      <span id="study-deck-name" class="study-deck-name">Deck</span>
+      <span id="study-progress-label" class="mono-label">1 / 1</span>
+    </div>
+    <button class="btn-icon" id="study-shuffle" aria-label="Shuffle deck" title="Shuffle">⤮</button>
+  </header>
+
+  <div class="progress-track">
+    <div id="progress-fill" class="progress-fill"></div>
+  </div>
+
+  <div class="stage">
+    <div class="deck-stack" id="deck-stack">
+      <div class="stack-ghost stack-ghost-2"></div>
+      <div class="stack-ghost stack-ghost-1"></div>
+      <div class="flip-card" id="flip-card" tabindex="0" role="button" aria-label="Flashcard, press space or enter to flip">
+        <div class="flip-card-inner" id="flip-card-inner">
+          <div class="flip-face flip-face-front">
+            <span class="face-eyebrow mono-label">FRONT</span>
+            <p class="face-text" id="face-front-text"></p>
+            <span class="face-hint">tap to flip</span>
+          </div>
+          <div class="flip-face flip-face-back">
+            <span class="face-eyebrow mono-label">BACK</span>
+            <p class="face-text" id="face-back-text"></p>
+            <span class="face-hint">tap to flip back</span>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="controls">
-      <button onclick="prevCard()">Prev ⬅️</button>
-      <button onclick="nextCard()">Next ➡️</button>
-    </div>
   </div>
 
-  <script src="script.js"></script>
+  <div class="study-controls">
+    <button class="btn btn-clay" id="btn-still-learning">Still learning</button>
+    <button class="btn btn-ghost btn-nav" id="btn-prev" aria-label="Previous card">‹</button>
+    <button class="btn btn-ghost btn-nav" id="btn-next" aria-label="Next card">›</button>
+    <button class="btn btn-sage" id="btn-know-it">Know it</button>
+  </div>
+</section>
+
+<!-- ===================== ROUND COMPLETE VIEW ===================== -->
+<section id="view-complete" class="view hidden">
+  <div class="complete-card">
+    <span class="face-eyebrow mono-label">ROUND COMPLETE</span>
+    <h2 class="complete-heading" id="complete-heading">Nice work.</h2>
+    <div class="complete-stats">
+      <div class="complete-stat">
+        <span class="complete-stat-num" id="complete-known-num">0</span>
+        <span class="complete-stat-label">known</span>
+      </div>
+      <div class="complete-stat">
+        <span class="complete-stat-num" id="complete-learning-num">0</span>
+        <span class="complete-stat-label">still learning</span>
+      </div>
+    </div>
+    <div class="complete-actions">
+      <button class="btn btn-primary" id="complete-retry-learning">Retry still-learning cards</button>
+      <button class="btn btn-ghost" id="complete-restart">Restart full deck</button>
+      <button class="btn btn-ghost" id="complete-exit">Back to library</button>
+    </div>
+  </div>
+</section>
+
+<script src="script.js"></script>
 </body>
 </html>
