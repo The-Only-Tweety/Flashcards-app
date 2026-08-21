@@ -79,9 +79,6 @@
   const completeRestart = document.getElementById("complete-restart");
   const completeExit = document.getElementById("complete-exit");
 
-  /* ---------------------------------------------------------
-     VIEW ROUTING
-  --------------------------------------------------------- */
   function showView(name) {
     Object.entries(views).forEach(([key, el]) => {
       el.classList.toggle("hidden", key !== name);
@@ -134,7 +131,7 @@
   }
 
   function openEditor(deckId) {
-    state.activeDeckId = deckId;
+    state.activeDeckId = deckID;
     state.editingCardId = null;
     resetCardForm();
     renderEditor();
